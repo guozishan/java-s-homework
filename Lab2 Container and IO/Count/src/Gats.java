@@ -18,10 +18,8 @@ import java.util.StringTokenizer;
 import java.io.File;
 
 public class Gats {
-	private static Map<String,Integer> readByFileReader(String filename) throws Exception {
-		Map<String,Integer> map = new HashMap<>();
+	private static String readFromTxt(String filename) throws Exception {
 		Reader reader = null;
-		String artical = "";
 		try {
 			StringBuffer buf = new StringBuffer();
 			char[] chars = new char[1024];
@@ -31,24 +29,34 @@ public class Gats {
 				buf.append(chars, 0, readed);
 				readed = reader.read(chars);
 			}
-			artical = buf.toString();
+			return buf.toString();
 		} finally {
 			close(reader);
 		}
-		StringTokenizer st = new StringTokenizer(artical.toString()," ,?.!:\\\"\\\"''\\n#");
-		while(st.hasMoreElements()) {
-			String str = st.nextToken().toLowerCase(); 
-			if(map.containsKey(str)) {
-				Integer ex = map.get(str)+1;
-				map.put(str, ex);
+	}
+	
+	private static String readFromTxt1(String filename) {
+		
+		return "";
+	}
+	
+	private static Map<String,Integer> stringToMap(String str){
+		Map<String,Integer> map = new HashMap<>();
+		String contents[] = str.split("\\s+");
+		for(int i=0;i<contents.length;i++) {
+			String temp = contents[i];
+			//System.out.print(i+"----"+contents[i]);
+			if(map.containsKey(temp)) {
+				Integer ex = map.get(temp)+1;
+				map.put(temp, ex);
 			}else {
-				map.put(str,1);
+				map.put(temp,1);
 			}
-		}	
+		}
 		return map;
 	}
 	
-		private static List<Entry<String,Integer>> sort(Map<String,Integer> record) {
+	private static List<Entry<String,Integer>> sort(Map<String,Integer> record) {
 			List<Entry<String,Integer>> list = new ArrayList<Entry<String,Integer>>(record.entrySet());
 			Collections.sort(list,new Comparator<Map.Entry<String,Integer>>() {
 				public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2) {
@@ -56,11 +64,9 @@ public class Gats {
 	            }
 	        });
 			return list;
-		}
-		
-		
-		
-		private static void close(Closeable inout) {
+	}
+	
+	private static void close(Closeable inout) {
 			if (inout != null) {
 				try {
 					inout.close();
@@ -71,28 +77,29 @@ public class Gats {
 			}
 		}
 		
-
-		private static void output(List<Entry<String,Integer>> list, String filename) throws IOException {	
-			File outputFile = new File(filename);
-			if(!outputFile.exists()) {
-				outputFile.createNewFile();
-			}
-			OutputStream os = new FileOutputStream(outputFile);
-			StringBuffer temp = new StringBuffer();
-			for (Entry<String, Integer> e: list) {
-				temp.append(e.getKey() + " " + e.getValue()+"\n");
-			}
-			byte data[] = temp.toString().getBytes();
-			os.write(data);
-			os.close();
+    private static void output(List<Entry<String,Integer>> list, String filename) throws IOException {	
+		File outputFile = new File(filename);
+		if(!outputFile.exists()) {
+			outputFile.createNewFile();
 		}
+		OutputStream os = new FileOutputStream(outputFile);
+		StringBuffer temp = new StringBuffer();
+		for (Entry<String, Integer> e: list) {
+			temp.append(e.getKey() + " " + e.getValue()+"\r\n");
+		}
+		byte data[] = temp.toString().getBytes();
+		os.write(data);
+		os.close();
+	}
 		
-		public static void main(String args[]) throws Exception {
-			Map<String, Integer> record = new HashMap<>();
-			String artical = "C:/Users/lenovo/Desktop/theGreatGatsby.txt";
-			String output = "C:/Users/lenovo/Desktop/output.txt";
-			record =  readByFileReader(artical);
-			List<Entry<String,Integer>> list = sort(record);
-			output(list,output);
-		}
+	public static void main(String args[]) throws Exception {
+		Map<String, Integer> map = new HashMap<>();
+		String txt = "";
+		String input = "C:/Users/lenovo/Desktop/theGreatGatsby.txt";
+		String output = "C:/Users/lenovo/Desktop/output.txt";
+		txt =  readFromTxt(input);
+		map = stringToMap(txt);
+		List<Entry<String,Integer>> list = sort(map);
+		output(list,output);
+	}
 }
