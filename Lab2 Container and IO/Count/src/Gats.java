@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -35,9 +36,14 @@ public class Gats {
 		}
 	}
 	
-	private static String readFromTxt1(String filename) {
-		
-		return "";
+	private static String readFromTxt1(String filename) throws IOException {
+		StringBuffer buffer = new StringBuffer();
+        BufferedReader bf= new BufferedReader(new FileReader(filename));
+        String s = null;
+        while((s = bf.readLine())!=null){//使用readLine方法，一次读一行
+            buffer.append(s.trim());
+        }
+        return buffer.toString();
 	}
 	
 	private static Map<String,Integer> stringToMap(String str){
